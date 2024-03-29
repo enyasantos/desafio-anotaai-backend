@@ -42,4 +42,17 @@ export class Product {
   public getCategory(): string {
     return this.props.category;
   }
+
+  public toString(type: string): string {
+    const strJsonObject = JSON.stringify({
+      id: this._id,
+      title: this.props.title,
+      owner: this.props.owner,
+      category: this.props.category,
+      price: this.props.price,
+      description: this.props.description,
+      type,
+    });
+    return strJsonObject;
+  }
 }

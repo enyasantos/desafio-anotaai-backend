@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Notification } from 'src/modules/aws/entities/notification.entity';
-import { NotificationService } from 'src/modules/aws/use-case/publish-notification/publish-notification.service';
+import { Notification } from 'src/modules/publisher/entities/notification.entity';
+import { NotificationService } from 'src/modules/publisher/use-case/publish-notification/publish-notification.service';
 import { CreateProductsDto } from '../../dtos/create-product.dto';
 import { Product } from '../../entities/product.entity';
 import { ProductsRepository } from '../../repositories/product.repository';
@@ -23,7 +23,7 @@ export class CreateProductService {
 
     const response = await this.productsRepository.create(productObject);
     await this.notificationService.publish(
-      new Notification(product.owner),
+      new Notification(response.toString('create-product')),
       process.env.AWS_SNS_TOPIC_CATALOG_ARN,
     );
     return response;

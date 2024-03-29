@@ -32,4 +32,15 @@ export class Category {
   public getDescription(): string {
     return this.props.description;
   }
+
+  public toString(type: string): string {
+    const strJsonObject = JSON.stringify({
+      id: this._id,
+      title: this.props.title,
+      owner: this.props.owner,
+      description: this.props.description,
+      type,
+    });
+    return strJsonObject;
+  }
 }
