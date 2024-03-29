@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ZodValidationPipe } from 'nestjs-zod';
+import configuration from 'src/configuration/configuration';
 import { CategoriesModule } from 'src/modules/categories/categories.module';
 import { ProductsModule } from 'src/modules/products/products.module';
 
@@ -13,9 +15,11 @@ import { ProductsModule } from 'src/modules/products/products.module';
     },
   ],
   imports: [
-    MongooseModule.forRoot(
-      'mongodb://localhost:27017/marketplace-app?retryWrites=true&w=majority',
-    ),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    MongooseModule.forRoot(process.env.DATABASE_URL),
     CategoriesModule,
     ProductsModule,
   ],

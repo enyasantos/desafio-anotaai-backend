@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/infra/database/mongoose/mongodb.module';
+import { AwsModule } from '../aws/aws.module';
 import { CreateProductController } from './use-case/create-product/create-product.controller';
 import { CreateProductService } from './use-case/create-product/create-product.service';
 import { DeleteProductController } from './use-case/delete-product/delete-product.controller';
@@ -12,7 +13,7 @@ import { UpdateProductController } from './use-case/update-product/update-produc
 import { UpdateProductService } from './use-case/update-product/update-product.service';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AwsModule],
   providers: [
     CreateProductService,
     DeleteProductService,

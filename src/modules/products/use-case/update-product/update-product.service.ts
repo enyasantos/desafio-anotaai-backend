@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { Notification } from 'src/modules/aws/entities/notification.entity';
+import { NotificationService } from 'src/modules/aws/use-case/publish-notification/publish-notification.service';
 import { UpdateProductsDto } from '../../dtos/update-product.dto';
 import { Product } from '../../entities/product.entity';
 import { ProductsRepository } from '../../repositories/product.repository';
 
 @Injectable()
 export class UpdateProductService {
-  constructor(private readonly productsRepository: ProductsRepository) {}
+  constructor(
+    private readonly productsRepository: ProductsRepository,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async execute(product: UpdateProductsDto, id: string) {
     const productObject = new Product(
@@ -18,6 +23,13 @@ export class UpdateProductService {
       },
       id,
     );
-    return await this.productsRepository.update(id, productObject);
+
+    const response = await this.productsRepository.update(id, productObject);
+    await this.notificationService.publish(
+      new Notification(product.owner),
+      process.env.AWS_SNS_TOPIC_CATALOG_ARN,
+    );
+
+    return response;
   }
 }
