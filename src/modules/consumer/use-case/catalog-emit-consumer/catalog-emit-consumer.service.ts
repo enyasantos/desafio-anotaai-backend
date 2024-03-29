@@ -1,12 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SqsMessageHandler } from '@ssut/nestjs-sqs';
 import * as AWS from 'aws-sdk';
+import CatalogModificationsService from 'src/modules/catalogs/use-case/catalog-modifications/catalog-modifications.service';
+import {
+  MessageCategoryCatalog,
+  MessageProductCatalog,
+} from '../../type/message-catalog.type';
 
 @Injectable()
 export class CatalogEmitConsumerService {
   private readonly logger = new Logger(CatalogEmitConsumerService.name);
 
-  constructor() {}
+  constructor(
+    private readonly catalogModificationsService: CatalogModificationsService,
+  ) {}
 
   @SqsMessageHandler(process.env.AWS_SQS_QUEUE_NAME, false)
   async consumeMessages(message: AWS.SQS.Message): Promise<unknown> {
@@ -15,7 +22,11 @@ export class CatalogEmitConsumerService {
         message: string;
         date: string;
       };
-      const data = JSON.parse(objMessage.Message);
+      const data: MessageProductCatalog | MessageCategoryCatalog = JSON.parse(
+        objMessage.Message,
+      );
+
+      await this.catalogModificationsService.execute(data);
 
       this.logger.log(`Message consumed successfully: ${objMessage.Message}`);
 

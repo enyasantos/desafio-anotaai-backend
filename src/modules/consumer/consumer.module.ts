@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SqsModule } from '@ssut/nestjs-sqs';
 import * as AWS from 'aws-sdk';
+import { CatalogsModule } from '../catalogs/catalogs.module';
 import { CatalogEmitConsumerService } from '../consumer/use-case/catalog-emit-consumer/catalog-emit-consumer.service';
 
 AWS.config.update({
@@ -23,6 +24,7 @@ AWS.config.update({
       ],
       producers: [],
     }),
+    CatalogsModule,
   ],
   providers: [CatalogEmitConsumerService],
   exports: [],
